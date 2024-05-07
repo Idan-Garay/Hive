@@ -11,17 +11,18 @@ const config = {
       parser: "@typescript-eslint/parser",
     },
   ],
-  plugins: ["@typescript-eslint", "drizzle"],
+  plugins: ["@typescript-eslint", "drizzle", "prettier"],
   extends: [
     "next/core-web-vitals",
     "plugin:tailwindcss/recommended",
-    "prettier",
     "plugin:@typescript-eslint/recommended-type-checked",
     "plugin:@typescript-eslint/stylistic-type-checked",
+    "prettier",
   ],
   rules: {
     "@typescript-eslint/array-type": "off",
     "@typescript-eslint/consistent-type-definitions": "off",
+    "@typescript-eslint/no-empty-interface": "off",
     "@typescript-eslint/consistent-type-imports": [
       "warn",
       {
