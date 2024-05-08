@@ -18,8 +18,10 @@ export const metadata = {
 
 export default function RootLayout({
   children,
+  flow,
 }: {
   children: React.ReactNode;
+  flow: React.ReactNode;
 }) {
   return (
     <html lang="en">
@@ -29,7 +31,10 @@ export default function RootLayout({
           inter.variable
         )}
       >
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <TRPCReactProvider>
+          {children}
+          {flow}
+        </TRPCReactProvider>
       </body>
     </html>
   );

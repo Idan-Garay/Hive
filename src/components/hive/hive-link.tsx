@@ -11,9 +11,13 @@ const linkVariants = cva("whitespace-nowrap ", {
       default: "text-secondary hover:underline",
       ghost: "text-sm text-primary/30 hover:underline",
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      button: cn(
+      "button-outline": cn(
         buttonVariants({ variant: "outline" }),
-        "hover:text-primary-foreground"
+        "hover:text-outline-foreground"
+      ),
+      "button-secondary": cn(
+        buttonVariants({ variant: "secondary" }),
+        "hover:text-secondary-foreground"
       ),
     },
   },

@@ -40,12 +40,13 @@ export const AuthContent = () => {
           or
         </p>
       </div>
-      <Button
-        variant="secondary"
+      <HiveLink
+        href="/sign-up"
+        variant="button-secondary"
         className="mb-2 font-semibold lg:max-w-[356px]"
       >
         Create Account
-      </Button>
+      </HiveLink>
       <p className="w-[300px] text-xs text-muted-foreground">
         By signing up, you agree to the{" "}
         <HiveLink href="https://twitter.com/tos">Terms of Service</HiveLink> and{" "}
@@ -64,7 +65,7 @@ export const AuthContent = () => {
         <HiveLink
           prefetch={false}
           shallow={true}
-          variant="button"
+          variant="button-outline"
           href="/login"
         >
           Sign in
