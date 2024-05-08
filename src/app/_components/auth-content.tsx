@@ -42,6 +42,7 @@ export const AuthContent = () => {
       </div>
       <HiveLink
         href="/sign-up"
+        replace
         variant="button-secondary"
         className="mb-2 font-semibold lg:max-w-[356px]"
       >
@@ -67,6 +68,7 @@ export const AuthContent = () => {
           shallow={true}
           variant="button-outline"
           href="/login"
+          replace
         >
           Sign in
         </HiveLink>
