@@ -4,28 +4,22 @@ import { DialogTitle } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import Image from "next/image";
 import { HiveDoB } from "./_components/hive-dob";
-import { z } from "zod";
+import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem } from "~/components/ui/form";
-
-export const formSchema = z.object({
-  name: z.string().min(2).max(50),
-  email: z.string().min(2).max(50),
-  // YYYY - MM - DD;
-  dateOfBirth: z.string().date(),
-});
+import { signUp1Schema } from "~/app/schemas/sign-up-schema";
 
 export default function SignupPage() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof signUp1Schema>>({
+    resolver: zodResolver(signUp1Schema),
     defaultValues: {
       name: "",
       email: "",
       dateOfBirth: "2024-12-12",
     },
   });
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof signUp1Schema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
@@ -72,7 +66,11 @@ export default function SignupPage() {
             />
             <div className="h-6"></div>
 
-            <HiveDoB formSetValue={form.setValue} />
+            <HiveDoB
+              setFormDob={(dob: string) => {
+                form.setValue("dateOfBirth", dob);
+              }}
+            />
             <Button type="submit" className="mt-auto font-semibold">
               Next
             </Button>

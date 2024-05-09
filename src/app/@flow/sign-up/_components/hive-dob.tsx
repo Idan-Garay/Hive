@@ -1,8 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import type { UseFormSetValue } from "react-hook-form";
-import type { z } from "zod";
-import { formSchema } from "../page";
 import {
   Select,
   SelectContent,
@@ -15,8 +12,8 @@ import { cn } from "~/lib/utils";
 const CURRENT_YEAR = new Date().getFullYear();
 
 export const HiveDoB: React.FC<{
-  formSetValue: UseFormSetValue<z.infer<typeof formSchema>>;
-}> = ({ formSetValue }) => {
+  setFormDob: (dob: string) => void;
+}> = ({ setFormDob }) => {
   const [month, setMonth] = useState<number | undefined>(undefined);
   const [day, setDay] = useState<number | undefined>(undefined);
   const [year, setYear] = useState<number | undefined>(undefined);
@@ -30,11 +27,10 @@ export const HiveDoB: React.FC<{
 
   useEffect(() => {
     // YYYY - MM - DD;
-    formSetValue(
-      "dateOfBirth",
+    setFormDob(
       `${year}-${String(month).padStart(2, "0")}-${String(day)?.padStart(2, "0")}`
     );
-  }, [month, day, year, formSetValue]);
+  }, [month, day, year, setFormDob]);
 
   return (
     <div className="">
