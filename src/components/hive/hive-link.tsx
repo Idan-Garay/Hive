@@ -3,7 +3,6 @@ import Link from "next/link";
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { buttonVariants } from "../ui/button";
-// import type of Next Link component
 
 const linkVariants = cva("whitespace-nowrap ", {
   variants: {
