@@ -7,8 +7,17 @@ import { HiveDoB } from "./_components/hive-dob";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Form, FormControl, FormField, FormItem } from "~/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "~/components/ui/form";
 import { signUp1Schema } from "~/app/schemas/sign-up-schema";
+// import { api } from "~/trpc/server";
+import { api } from "~/trpc/react";
+import { cn } from "~/lib/utils";
 
 export default function SignupPage() {
   const form = useForm<z.infer<typeof signUp1Schema>>({
@@ -19,10 +28,29 @@ export default function SignupPage() {
       dateOfBirth: "2024-12-12",
     },
   });
-  function onSubmit(values: z.infer<typeof signUp1Schema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+
+  const createAccount = api.user.createAccount.useMutation({
+    onSuccess: () => {
+      console.log("here");
+    },
+    onError: (error) => {
+      form.setError("email", { message: error.message });
+      console.error(error, "er1");
+    },
+  });
+
+  const getEmail = api.user.getAccountEmail.useQuery(form.getValues().email, {
+    enabled: false,
+  });
+
+  async function onSubmit(values: z.infer<typeof signUp1Schema>) {
+    try {
+      const res = await createAccount.mutateAsync(values);
+      console.log({ res });
+    } catch (error) {
+      console.error(error, "er2");
+    }
+    //
   }
 
   return (
@@ -56,11 +84,28 @@ export default function SignupPage() {
             <FormField
               control={form.control}
               name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input placeholder="Email" {...field} />
+              render={({ field, fieldState }) => (
+                <FormItem className="relative border">
+                  <FormControl
+                    onBlur={async () => {
+                      await getEmail.refetch();
+
+                      form.setError("email", {
+                        message: getEmail.data
+                          ? "Email has already been taken."
+                          : "",
+                      });
+                    }}
+                  >
+                    <Input
+                      className={cn({
+                        "border-[1.5px] border-destructive": fieldState.error,
+                      })}
+                      placeholder="Email"
+                      {...field}
+                    />
                   </FormControl>
+                  <FormMessage className="absolute mt-1 pl-2 font-medium" />
                 </FormItem>
               )}
             />
@@ -71,8 +116,16 @@ export default function SignupPage() {
                 form.setValue("dateOfBirth", dob);
               }}
             />
-            <Button type="submit" className="mt-auto font-semibold">
-              Next
+            <Button
+              disabled={form.formState.isSubmitting || !form.formState.isValid}
+              type="submit"
+              className="mt-auto font-semibold"
+            >
+              {form.formState.isSubmitting ? (
+                <div className="size-4 animate-spin rounded-full border-2 border-secondary border-t-transparent"></div>
+              ) : (
+                "Next"
+              )}
             </Button>
           </div>
         </div>

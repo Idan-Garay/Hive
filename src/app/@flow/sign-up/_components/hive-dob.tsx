@@ -28,7 +28,7 @@ export const HiveDoB: React.FC<{
   useEffect(() => {
     // YYYY - MM - DD;
     setFormDob(
-      `${year}-${String(month).padStart(2, "0")}-${String(day)?.padStart(2, "0")}`
+      `${year}-${String((month ?? 0) + 1).padStart(2, "0")}-${String(day)?.padStart(2, "0")}`
     );
   }, [month, day, year, setFormDob]);
 

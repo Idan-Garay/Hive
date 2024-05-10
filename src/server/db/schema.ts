@@ -32,3 +32,13 @@ export const posts = createTable(
     nameIndex: index("name_idx").on(example.name),
   })
 );
+
+export const users = createTable("user", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 50 }),
+  email: varchar("email", { length: 120 }).unique(),
+  dateOfBirth: timestamp("date_of_birth", { mode: "string" }),
+  username: varchar("username", { length: 30 }).unique(),
+  password: varchar("password", { length: 256 }),
+  imageUrl: varchar("image_url", { length: 256 }),
+});
