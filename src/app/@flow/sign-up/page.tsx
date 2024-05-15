@@ -35,7 +35,6 @@ export default function SignupPage() {
     },
     onError: (error) => {
       form.setError("email", { message: error.message });
-      console.error(error, "er1");
     },
   });
 

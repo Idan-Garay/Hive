@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export const AuthContent = () => {
   return (
-    <div className="flex w-full flex-col lg:justify-center">
+    <div className="flex flex-col lg:justify-center">
       <div className="py-16 ">
         <h1 className="text-6xl font-extrabold leading-normal tracking-wide">
           Happening now
@@ -34,11 +34,10 @@ export const AuthContent = () => {
         />
         Sign up with Github
       </Button>
-      <div className="relative h-[40px] w-[300px] ">
-        <hr className="absolute left-1/2 top-1/2 z-0 w-full -translate-x-1/2 -translate-y-1/2 border-foreground/30 " />
-        <p className=" absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 bg-primary-foreground px-2 text-primary">
-          or
-        </p>
+      <div className="relative flex h-[40px] w-full flex-row items-center px-3 lg:max-w-[356px]">
+        <hr className="grow border-foreground/30" />
+        <p className="bg-primary-foreground px-2 text-primary">or</p>
+        <hr className="grow border-foreground/30" />
       </div>
       <HiveLink
         href="/sign-up"
