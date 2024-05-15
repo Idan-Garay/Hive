@@ -1,7 +1,16 @@
-export const HiveLoading = () => {
+import { cn } from "~/lib/utils";
+
+export const HiveLoading: React.FC<React.HTMLAttributes<HTMLDivElement>> = (
+  props
+) => {
+  const { className } = props;
+
   return (
-    <div className="absolute size-full">
-      <div className=" border-2 border-secondary"></div>
-    </div>
+    <div
+      className={cn(
+        "size-4 animate-spin rounded-full border-2 border-secondary border-t-transparent",
+        className
+      )}
+    ></div>
   );
 };

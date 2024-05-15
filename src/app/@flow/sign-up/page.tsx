@@ -15,9 +15,9 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { signUp1Schema } from "~/app/schemas/sign-up-schema";
-// import { api } from "~/trpc/server";
 import { api } from "~/trpc/react";
 import { cn } from "~/lib/utils";
+import { HiveLoading } from "~/components/hive/hive-loading";
 
 export default function SignupPage() {
   const form = useForm<z.infer<typeof signUp1Schema>>({
@@ -84,16 +84,17 @@ export default function SignupPage() {
               control={form.control}
               name="email"
               render={({ field, fieldState }) => (
-                <FormItem className="relative border">
+                <FormItem className="relative">
                   <FormControl
                     onBlur={async () => {
                       await getEmail.refetch();
-
-                      form.setError("email", {
-                        message: getEmail.data
-                          ? "Email has already been taken."
-                          : "",
-                      });
+                      if (getEmail.data) {
+                        form.setError("email", {
+                          message: "Email has already been taken.",
+                        });
+                      } else {
+                        form.clearErrors("email");
+                      }
                     }}
                   >
                     <Input
@@ -120,11 +121,7 @@ export default function SignupPage() {
               type="submit"
               className="mt-auto font-semibold"
             >
-              {form.formState.isSubmitting ? (
-                <div className="size-4 animate-spin rounded-full border-2 border-secondary border-t-transparent"></div>
-              ) : (
-                "Next"
-              )}
+              {form.formState.isSubmitting ? <HiveLoading /> : "Next"}
             </Button>
           </div>
         </div>
