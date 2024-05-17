@@ -6,3 +6,5 @@ export const signUp1Schema = z.object({
   // YYYY - MM - DD;
   dateOfBirth: z.string().date(),
 });
+
+export const verificationCodeSchema = z.object({ code: z.string().length(16) });

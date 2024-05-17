@@ -11,9 +11,11 @@ import {
 import { cn } from "~/lib/utils";
 const CURRENT_YEAR = new Date().getFullYear();
 
-export const HiveDoB: React.FC<{
+export const HiveDoB = ({
+  setFormDob,
+}: {
   setFormDob: (dob: string) => void;
-}> = ({ setFormDob }) => {
+}): JSX.Element => {
   const [month, setMonth] = useState<number | undefined>(undefined);
   const [day, setDay] = useState<number | undefined>(undefined);
   const [year, setYear] = useState<number | undefined>(undefined);
@@ -91,19 +93,19 @@ export const HiveDoB: React.FC<{
   );
 };
 
-const HiveSelect: React.FC<{
-  value: number | undefined;
-  handleValueChange: (val: string) => void;
-  triggerText?: string;
-  contentList: { value: string; text: string }[];
-  triggerClassName?: string;
-}> = ({
+const HiveSelect = ({
   value,
   handleValueChange,
   triggerText,
   contentList,
   triggerClassName,
-}) => {
+}: {
+  value: number | undefined;
+  handleValueChange: (val: string) => void;
+  triggerText?: string;
+  contentList: { value: string; text: string }[];
+  triggerClassName?: string;
+}): JSX.Element => {
   return (
     <Select
       defaultValue={undefined}

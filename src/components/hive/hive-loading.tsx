@@ -1,10 +1,7 @@
 import { cn } from "~/lib/utils";
 
-export const HiveLoading: React.FC<React.HTMLAttributes<HTMLDivElement>> = (
-  props
-) => {
+export const HiveLoading = (props: HiveLoadingProps) => {
   const { className } = props;
-
   return (
     <div
       className={cn(
@@ -13,4 +10,8 @@ export const HiveLoading: React.FC<React.HTMLAttributes<HTMLDivElement>> = (
       )}
     ></div>
   );
+};
+
+export type HiveLoadingProps = {
+  className?: string;
 };
