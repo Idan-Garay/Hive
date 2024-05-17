@@ -5,7 +5,7 @@ export const HiveLoading = (props: HiveLoadingProps) => {
   return (
     <div
       className={cn(
-        "size-4 animate-spin rounded-full border-2 border-secondary border-t-transparent",
+        "size-7 animate-spin rounded-full border-2 border-secondary border-t-transparent",
         className
       )}
     ></div>

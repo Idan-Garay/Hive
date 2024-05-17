@@ -3,6 +3,7 @@
 
 import { sql } from "drizzle-orm";
 import {
+  boolean,
   index,
   pgTableCreator,
   serial,
@@ -41,4 +42,14 @@ export const users = createTable("user", {
   username: varchar("username", { length: 30 }).unique(),
   password: varchar("password", { length: 256 }),
   imageUrl: varchar("image_url", { length: 256 }),
+  isVerified: boolean("is_verified").default(false),
+});
+
+export const verificationCode = createTable("verification_code", {
+  id: serial("id").primaryKey(),
+  code: varchar("code", { length: 16 }),
+  email: varchar("email", { length: 120 }),
+  createdAt: timestamp("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
 });

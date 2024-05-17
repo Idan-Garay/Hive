@@ -8,3 +8,6 @@ export const signUp1Schema = z.object({
 });
 
 export const verificationCodeSchema = z.object({ code: z.string().length(16) });
+export const passwordSchema = z.object({
+  password: z.string().length(24),
+});

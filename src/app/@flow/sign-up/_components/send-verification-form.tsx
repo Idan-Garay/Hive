@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,16 +17,17 @@ import { cn } from "~/lib/utils";
 import { HiveLoading } from "~/components/hive/hive-loading";
 import { Button } from "~/components/ui/button";
 import { ArrowLeftIcon, CheckIcon } from "@radix-ui/react-icons";
-import { sendVerificationCode } from "~/lib/mail";
 import { useState } from "react";
 import { useToast } from "~/components/ui/use-toast";
+import { api } from "~/trpc/react";
 
 export const SendVerificationForm = (
   props: SendVerificationFormProps
 ): JSX.Element => {
-  const { className, email } = props;
+  const { className, email, nextForm } = props;
   const [isResendingSuccess, setIsResendingSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [invalidCode, setInvalidCode] = useState(false);
   const { toast } = useToast();
   const form = useForm<z.infer<typeof verificationCodeSchema>>({
     resolver: zodResolver(verificationCodeSchema),
@@ -34,8 +36,19 @@ export const SendVerificationForm = (
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof verificationCodeSchema>) => {
-    console.log(data);
+  const verifyAccountByCode = api.user.verifyAccountByCode.useMutation();
+  const sendVerificationCode = api.user.sendVerificationCode.useMutation();
+
+  const onSubmit = async (values: z.infer<typeof verificationCodeSchema>) => {
+    const res = await verifyAccountByCode.mutateAsync({
+      email,
+      code: values.code,
+    });
+    if (res.isVerified) {
+      nextForm();
+    } else {
+      form.setError("code", { message: "Invalid code" });
+    }
   };
 
   return (
@@ -56,32 +69,36 @@ export const SendVerificationForm = (
             <DialogTitle className="text-3xl font-bold">
               We sent you a code
             </DialogTitle>
-            <p className="">Enter it below to verify {email}</p>
-            <div className="h-6"></div>
+            <p className="py-1 text-muted-foreground">
+              Enter it below to verify {email}
+            </p>
+            <div className="min-h-6"></div>
             <FormField
               control={form.control}
               name="code"
               render={({ field, fieldState }) => (
-                <FormItem className="relative">
+                <FormItem className="relative space-y-0">
+                  <FormMessage className="absolute -bottom-6 -right-0 mt-1 pl-2 font-medium" />
                   <FormControl>
                     <Input
                       className={cn({
-                        "border-[1.5px] border-destructive": fieldState.error,
+                        "border-destructive": fieldState.error,
                       })}
-                      placeholder="Verification  code"
+                      placeholder="Verification code"
                       {...field}
+                      onFocus={() => form.clearErrors("code")}
                     />
                   </FormControl>
-                  <FormMessage className="absolute mt-1 pl-2 font-medium" />
                 </FormItem>
               )}
             />
             <span
               onClick={async () => {
                 setIsLoading(true);
-
-                const res = await sendVerificationCode(email);
-                if ((res?.accepted.length ?? 0) > 0) {
+                const emailRecepient = await sendVerificationCode.mutateAsync({
+                  email,
+                });
+                if (emailRecepient !== undefined) {
                   setIsLoading(false);
                   setIsResendingSuccess(true);
                   setTimeout(() => {
@@ -91,7 +108,8 @@ export const SendVerificationForm = (
                   setIsLoading(false);
                   toast({
                     title: "Something went wrong",
-                    description: "Email not sent. Please try again.",
+                    description:
+                      "Verification code not sent. Please try again.",
                   });
                 }
               }}
@@ -99,7 +117,7 @@ export const SendVerificationForm = (
             >
               {"Didn't receive email?"}{" "}
               {isLoading ? (
-                <HiveLoading />
+                <HiveLoading className="size-4" />
               ) : isResendingSuccess ? (
                 <CheckIcon height={16} color="lightgreen" />
               ) : null}
@@ -112,7 +130,11 @@ export const SendVerificationForm = (
               type="submit"
               className="mt-auto py-5"
             >
-              {form.formState.isSubmitting ? <HiveLoading /> : "Next"}
+              {form.formState.isSubmitting ? (
+                <HiveLoading className="size-7 border-background border-t-transparent" />
+              ) : (
+                "Next"
+              )}
             </Button>
           </div>
         </div>
@@ -123,5 +145,6 @@ export const SendVerificationForm = (
 
 export type SendVerificationFormProps = {
   className?: string;
+  nextForm: () => void;
   email: string;
 };
