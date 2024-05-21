@@ -12,19 +12,17 @@ import {
 } from "~/components/ui/form";
 import { passwordSchema } from "~/app/schemas/sign-up-schema";
 import { DialogTitle } from "~/components/ui/dialog";
-import { Input } from "~/components/ui/input";
 import { cn } from "~/lib/utils";
 import { HiveLoading } from "~/components/hive/hive-loading";
 import { Button } from "~/components/ui/button";
-import { useState } from "react";
 import { useToast } from "~/components/ui/use-toast";
 import { api } from "~/trpc/react";
 import { HiveLink } from "~/components/hive/hive-link";
+import { HiveInputSecure } from "~/components/hive/hive-input-secure";
+import { useSignupStore } from "../store/signup-store";
 
 export const NeedPasswordForm = (props: NeedPasswordFormProps): JSX.Element => {
-  const { className, email } = props;
-  const [isResendingSuccess, setIsResendingSuccess] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const { email, nextForm } = useSignupStore();
   const { toast } = useToast();
   const form = useForm<z.infer<typeof passwordSchema>>({
     resolver: zodResolver(passwordSchema),
@@ -33,19 +31,26 @@ export const NeedPasswordForm = (props: NeedPasswordFormProps): JSX.Element => {
     },
   });
 
-  const verifyAccountByCode = api.user.verifyAccountByCode.useMutation();
-  const sendVerificationCode = api.user.sendVerificationCode.useMutation();
+  const updatePassword = api.user.updatePassword.useMutation();
 
   const onSubmit = async (values: z.infer<typeof passwordSchema>) => {
-    // const res = await verifyAccountByCode.mutateAsync({
-    //   email,
-    //   password: values.password,
-    // });
+    const res = await updatePassword.mutateAsync({
+      email,
+      password: values.password,
+    });
+
+    nextForm();
+    if (res === true) {
+    } else {
+      toast({
+        description: "Something went wrong",
+      });
+    }
   };
 
   return (
     <Form {...form}>
-      <form className="w-full" onSubmit={form.handleSubmit(onSubmit)}>
+      <form className="size-full" onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex size-full max-h-full flex-col">
           <Image
             src="/x-icon.svg"
@@ -68,10 +73,11 @@ export const NeedPasswordForm = (props: NeedPasswordFormProps): JSX.Element => {
               render={({ field, fieldState }) => (
                 <FormItem className="relative">
                   <FormControl>
-                    <Input
+                    <HiveInputSecure
                       className={cn({
                         "border-[1.5px] border-destructive": fieldState.error,
                       })}
+                      maxLength={24}
                       placeholder="Password"
                       {...field}
                     />
@@ -126,5 +132,4 @@ export const NeedPasswordForm = (props: NeedPasswordFormProps): JSX.Element => {
 
 export type NeedPasswordFormProps = {
   className?: string;
-  email: string;
 };

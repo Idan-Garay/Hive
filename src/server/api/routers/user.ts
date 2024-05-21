@@ -4,8 +4,9 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { users, verificationCode } from "~/server/db/schema";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import crypto from "node:crypto";
 import { sendEmailVerificationCode } from "~/lib/mail";
+import crypto from "node:crypto";
+import { genSaltSync, hashSync } from "bcrypt-ts";
 
 export const userRouter = createTRPCRouter({
   createAccount: publicProcedure
@@ -94,6 +95,26 @@ export const userRouter = createTRPCRouter({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Can't verify account. Please try again.",
+        });
+      }
+    }),
+  updatePassword: publicProcedure
+    .input(z.object({ email: z.string(), password: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { email, password } = input;
+      const salt = genSaltSync(10);
+      const hash = hashSync(password, salt);
+
+      try {
+        await ctx.db
+          .update(users)
+          .set({ password: hash })
+          .where(eq(users.email, email));
+        return true;
+      } catch (e) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Can't update password. Please try again.",
         });
       }
     }),

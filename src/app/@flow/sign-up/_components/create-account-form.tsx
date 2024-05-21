@@ -19,10 +19,10 @@ import { api } from "~/trpc/react";
 import { cn } from "~/lib/utils";
 import { HiveLoading } from "~/components/hive/hive-loading";
 import { Cross2Icon } from "@radix-ui/react-icons";
+import { useSignupStore } from "../store/signup-store";
 
-export const CreateAccountForm = (
-  _props: CreateAccountFormProps
-): JSX.Element => {
+export const CreateAccountForm = ({}: CreateAccountFormProps): JSX.Element => {
+  const { setEmail, nthForm, nextForm } = useSignupStore();
   const form = useForm<z.infer<typeof signUp1Schema>>({
     resolver: zodResolver(signUp1Schema),
     defaultValues: {
@@ -45,10 +45,16 @@ export const CreateAccountForm = (
     enabled: false,
   });
 
+  const handleSetDob = (dob: string) => {
+    form.setFocus("dateOfBirth");
+    form.setValue("dateOfBirth", dob);
+  };
+
   async function onSubmit(values: z.infer<typeof signUp1Schema>) {
     try {
       const res = await createAccount.mutateAsync(values);
-      console.log({ res });
+      setEmail(values.email);
+      nextForm();
     } catch (error) {
       console.error(error, "er2");
     }
@@ -57,7 +63,7 @@ export const CreateAccountForm = (
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form className="size-full" onSubmit={form.handleSubmit(onSubmit)}>
         <div className="h-full max-h-full">
           <DialogClose className="absolute left-5 top-5">
             <Cross2Icon className="size-5" />
@@ -115,11 +121,7 @@ export const CreateAccountForm = (
             />
             <div className="h-6"></div>
 
-            <HiveDoB
-              setFormDob={(dob: string) => {
-                form.setValue("dateOfBirth", dob);
-              }}
-            />
+            <HiveDoB setFormDob={handleSetDob} />
             <Button
               disabled={form.formState.isSubmitting || !form.formState.isValid}
               type="submit"

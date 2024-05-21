@@ -20,7 +20,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         }
       }}
     >
-      <DialogContent className="flex size-full max-h-full max-w-none rounded-none border-transparent px-12 sm:max-h-[650px] sm:max-w-[600px] sm:rounded-sm">
+      <DialogContent className="flex size-full max-h-full max-w-none overflow-hidden rounded-none border-transparent px-12 sm:max-h-[650px] sm:max-w-[600px] sm:rounded-sm">
         {children}
       </DialogContent>
     </Dialog>

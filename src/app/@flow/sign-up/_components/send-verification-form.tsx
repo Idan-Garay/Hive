@@ -17,17 +17,16 @@ import { cn } from "~/lib/utils";
 import { HiveLoading } from "~/components/hive/hive-loading";
 import { Button } from "~/components/ui/button";
 import { ArrowLeftIcon, CheckIcon } from "@radix-ui/react-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "~/components/ui/use-toast";
 import { api } from "~/trpc/react";
+import { useSignupStore } from "../store/signup-store";
 
-export const SendVerificationForm = (
-  props: SendVerificationFormProps
-): JSX.Element => {
-  const { className, email, nextForm } = props;
+export const SendVerificationForm = (): JSX.Element => {
+  const { email, nextForm } = useSignupStore();
   const [isResendingSuccess, setIsResendingSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [invalidCode, setInvalidCode] = useState(false);
+  const [isSentOnce, setIsSentOnce] = useState(false);
   const { toast } = useToast();
   const form = useForm<z.infer<typeof verificationCodeSchema>>({
     resolver: zodResolver(verificationCodeSchema),
@@ -39,21 +38,60 @@ export const SendVerificationForm = (
   const verifyAccountByCode = api.user.verifyAccountByCode.useMutation();
   const sendVerificationCode = api.user.sendVerificationCode.useMutation();
 
-  const onSubmit = async (values: z.infer<typeof verificationCodeSchema>) => {
-    const res = await verifyAccountByCode.mutateAsync({
+  const handleResend = async () => {
+    setIsSentOnce;
+    setIsLoading(true);
+    const emailRecepient = await sendVerificationCode.mutateAsync({
       email,
-      code: values.code,
     });
-    if (res.isVerified) {
-      nextForm();
+    if (emailRecepient !== undefined) {
+      setIsLoading(false);
+      setIsResendingSuccess(true);
+      setTimeout(() => {
+        setIsResendingSuccess(false);
+      }, 3000);
+
+      if (!isSentOnce) {
+        setIsSentOnce(true);
+      }
     } else {
-      form.setError("code", { message: "Invalid code" });
+      setIsLoading(false);
+      toast({
+        title: "Something went wrong",
+        description: "Verification code not sent. Please try again.",
+      });
     }
   };
 
+  const onSubmit = async (values: z.infer<typeof verificationCodeSchema>) => {
+    try {
+      const res = await verifyAccountByCode.mutateAsync({
+        email,
+        code: values.code,
+      });
+      if (res.isVerified) {
+        nextForm();
+      } else {
+        form.setError("code", { message: "Invalid code" });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    const controller = new AbortController();
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    handleResend();
+
+    return () => {
+      controller.abort();
+    };
+  }, []);
+
   return (
     <Form {...form}>
-      <form className="w-full" onSubmit={form.handleSubmit(onSubmit)}>
+      <form className="size-full" onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex size-full max-h-full flex-col">
           <DialogClose className="absolute left-5 top-5">
             <ArrowLeftIcon className="size-5" />
@@ -93,30 +131,11 @@ export const SendVerificationForm = (
               )}
             />
             <span
-              onClick={async () => {
-                setIsLoading(true);
-                const emailRecepient = await sendVerificationCode.mutateAsync({
-                  email,
-                });
-                if (emailRecepient !== undefined) {
-                  setIsLoading(false);
-                  setIsResendingSuccess(true);
-                  setTimeout(() => {
-                    setIsResendingSuccess(false);
-                  }, 3000);
-                } else {
-                  setIsLoading(false);
-                  toast({
-                    title: "Something went wrong",
-                    description:
-                      "Verification code not sent. Please try again.",
-                  });
-                }
-              }}
+              onClick={handleResend}
               className="flex cursor-pointer items-center gap-2 p-1 pl-3 text-sm font-medium text-secondary"
             >
               {"Didn't receive email?"}{" "}
-              {isLoading ? (
+              {isSentOnce && isLoading ? (
                 <HiveLoading className="size-4" />
               ) : isResendingSuccess ? (
                 <CheckIcon height={16} color="lightgreen" />
@@ -145,6 +164,4 @@ export const SendVerificationForm = (
 
 export type SendVerificationFormProps = {
   className?: string;
-  nextForm: () => void;
-  email: string;
 };
