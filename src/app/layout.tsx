@@ -5,6 +5,7 @@ import { Inter } from "next/font/google";
 import { TRPCReactProvider } from "~/trpc/react";
 import { cn } from "~/lib/utils";
 import { Toaster } from "~/components/ui/toaster";
+import AdminPage from "./@admin/page";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -17,16 +18,24 @@ export const metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
+export const getSession = () => {
+  return { userType: "customer" };
+};
+
 export default function RootLayout({
   children,
   flow,
   customer,
+  admin,
 }: {
   children: React.ReactNode;
   flow: React.ReactNode;
   customer: React.ReactNode;
+  admin: React.ReactNode;
 }) {
-  const isAuthorized = false;
+  const isAuthorized = true;
+  const userType = getSession().userType as UserType;
+
   return (
     <html lang="en">
       <body
@@ -37,10 +46,12 @@ export default function RootLayout({
       >
         <TRPCReactProvider>
           {flow}
-          {isAuthorized ? customer : children}
+          {isAuthorized ? (userType === "admin" ? admin : customer) : children}
         </TRPCReactProvider>
         <Toaster />
       </body>
     </html>
   );
 }
+
+type UserType = "customer" | "admin";
