@@ -20,10 +20,13 @@ export const metadata = {
 export default function RootLayout({
   children,
   flow,
+  customer,
 }: {
   children: React.ReactNode;
   flow: React.ReactNode;
+  customer: React.ReactNode;
 }) {
+  const isAuthorized = false;
   return (
     <html lang="en">
       <body
@@ -33,8 +36,8 @@ export default function RootLayout({
         )}
       >
         <TRPCReactProvider>
-          {children}
           {flow}
+          {isAuthorized ? customer : children}
         </TRPCReactProvider>
         <Toaster />
       </body>
