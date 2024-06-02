@@ -4,9 +4,11 @@ import { CreateAccountForm } from "./_components/create-account-form";
 import { SendVerificationForm } from "./_components/send-verification-form";
 import { NeedPasswordForm } from "./_components/need-password-form";
 import { useSignupStore } from "./store/signup-store";
+import { PickProfileForm } from "./_components/pick-profile-form";
 
 export default function SignupPage() {
   const { nthForm, nextForm } = useSignupStore();
+
   const variants = {
     enter: {
       x: 50,
@@ -66,7 +68,7 @@ export default function SignupPage() {
             animate="center"
             exit="exit"
           >
-            <h2>Under Construction...</h2>
+            <PickProfileForm />
           </motion.div>
         )}
       </AnimatePresence>

@@ -9,7 +9,7 @@ interface SignupStoreState {
 
 export const useSignupStore = create<SignupStoreState>((set, get) => ({
   email: "",
-  nthForm: 0,
+  nthForm: 3,
   setEmail: (email) => set({ email }),
   nextForm: () => set((state) => ({ nthForm: (state.nthForm + 1) % 4 })),
 }));
