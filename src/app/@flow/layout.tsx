@@ -10,6 +10,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setMounted(true);
   }, []);
+
   if (!mounted) return null;
   return (
     <Dialog

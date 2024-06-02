@@ -22,7 +22,7 @@ import { HiveInputSecure } from "~/components/hive/hive-input-secure";
 import { useSignupStore } from "../store/signup-store";
 
 export const NeedPasswordForm = (props: NeedPasswordFormProps): JSX.Element => {
-  const { email, nextForm } = useSignupStore();
+  const { email, completeForm } = useSignupStore();
   const { toast } = useToast();
   const form = useForm<z.infer<typeof passwordSchema>>({
     resolver: zodResolver(passwordSchema),
@@ -39,7 +39,8 @@ export const NeedPasswordForm = (props: NeedPasswordFormProps): JSX.Element => {
       password: values.password,
     });
 
-    nextForm();
+    // nextForm();
+    completeForm();
     if (res === true) {
     } else {
       toast({

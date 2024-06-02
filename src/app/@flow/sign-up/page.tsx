@@ -4,11 +4,13 @@ import { CreateAccountForm } from "./_components/create-account-form";
 import { SendVerificationForm } from "./_components/send-verification-form";
 import { NeedPasswordForm } from "./_components/need-password-form";
 import { useSignupStore } from "./store/signup-store";
-import { PickProfileForm } from "./_components/pick-profile-form";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+// import { PickProfileForm } from "./_components/pick-profile-form";
 
 export default function SignupPage() {
-  const { nthForm, nextForm } = useSignupStore();
-
+  const { nthForm, isFormComplete } = useSignupStore();
+  const router = useRouter();
   const variants = {
     enter: {
       x: 50,
@@ -23,6 +25,13 @@ export default function SignupPage() {
       opacity: 0,
     },
   };
+
+  useEffect(() => {
+    if (isFormComplete) {
+      router.replace("/");
+    }
+  }, [isFormComplete]);
+
   return (
     <>
       <AnimatePresence>
@@ -60,7 +69,7 @@ export default function SignupPage() {
             <NeedPasswordForm />
           </motion.div>
         )}
-        {nthForm === 3 && (
+        {/* {nthForm === 3 && (
           <motion.div
             key="form-4"
             className="min-w-full "
@@ -70,7 +79,7 @@ export default function SignupPage() {
           >
             <PickProfileForm />
           </motion.div>
-        )}
+        )} */}
       </AnimatePresence>
     </>
   );
