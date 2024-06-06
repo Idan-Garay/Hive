@@ -19,9 +19,14 @@ const linkVariants = cva("whitespace-nowrap ", {
         "hover:text-secondary-foreground"
       ),
     },
+    size: {
+      default: "",
+      lg: "min-h-14 rounded-md px-8 text-lg",
+    },
   },
   defaultVariants: {
     variant: "default",
+    size: "default",
   },
 });
 
@@ -34,10 +39,10 @@ export interface HiveLinksProps
 const HiveLink = React.forwardRef<
   React.ElementRef<typeof Link>,
   HiveLinksProps
->(({ className, variant, ...props }, ref) => (
+>(({ className, variant, size, ...props }, ref) => (
   <Link
     ref={ref}
-    className={cn(linkVariants({ variant, className }))}
+    className={cn(linkVariants({ variant, size, className }))}
     {...props}
   />
 ));

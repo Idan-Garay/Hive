@@ -50,7 +50,7 @@ export const CreateAccountForm = ({}: CreateAccountFormProps): JSX.Element => {
     form.setValue("dateOfBirth", dob);
   };
 
-  async function onSubmit(values: z.infer<typeof signUp1Schema>) {
+  const onSubmit = async (values: z.infer<typeof signUp1Schema>) => {
     try {
       const res = await createAccount.mutateAsync(values);
       setEmail(values.email);
@@ -59,7 +59,7 @@ export const CreateAccountForm = ({}: CreateAccountFormProps): JSX.Element => {
       console.error(error, "er2");
     }
     //
-  }
+  };
 
   return (
     <Form {...form}>

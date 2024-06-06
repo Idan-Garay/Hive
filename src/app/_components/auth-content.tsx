@@ -13,7 +13,7 @@ export const AuthContent = () => {
       <div className="pb-12">
         <h3 className="text-4xl font-extrabold">Join Today.</h3>
       </div>
-      <Button className="font-normal lg:max-w-[356px]">
+      <Button size="lg" className="font-normal lg:max-w-[356px]">
         <Image
           src="/google-icon.svg"
           alt="google-icon"
@@ -24,7 +24,7 @@ export const AuthContent = () => {
         Sign up with Google
       </Button>
       <div className="h-4"></div>
-      <Button className="font-semibold lg:max-w-[356px]">
+      <Button size="lg" className="font-semibold lg:max-w-[356px]">
         <Image
           src="/github-icon.svg"
           alt="apple-icon"
@@ -40,6 +40,7 @@ export const AuthContent = () => {
         <hr className="grow border-foreground/30" />
       </div>
       <HiveLink
+        size="lg"
         href="/sign-up"
         replace
         variant="button-secondary"
@@ -63,6 +64,7 @@ export const AuthContent = () => {
           Already have an account?
         </span>
         <HiveLink
+          size="lg"
           prefetch={false}
           shallow={true}
           variant="button-outline"

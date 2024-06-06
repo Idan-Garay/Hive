@@ -14,7 +14,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   if (!mounted) return null;
   return (
     <Dialog
-      open={pathname === "/sign-up"}
+      open={pathname === "/sign-up" || pathname === "/login"}
       onOpenChange={(open) => {
         if (!open) {
           route.replace("/");

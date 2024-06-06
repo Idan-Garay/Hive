@@ -11,3 +11,5 @@ export const verificationCodeSchema = z.object({ code: z.string().length(16) });
 export const passwordSchema = z.object({
   password: z.string().min(8).max(24),
 });
+
+export const loginFormSchema = z.object({ email: z.string().email() });
